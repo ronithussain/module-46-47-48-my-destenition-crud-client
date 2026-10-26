@@ -57,7 +57,7 @@ export default function Navbar() {
           <Link href="/login" className="transition-colors hover:text-[#15A1BF]">
             Login
           </Link>
-          <Link href="/signup" className="transition-colors hover:text-[#15A1BF]">
+          <Link href="/signUp" className="transition-colors hover:text-[#15A1BF]">
             Sign Up
           </Link>
         </div>

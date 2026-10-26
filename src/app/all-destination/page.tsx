@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 
-import DestinationCard from "@/components/DestinationCard";
+import DestinationCard from "@/components/Destination/DestinationCard";
 import { IDestination } from "../types/type";
 
 const filters = ["Category", "Price Range", "Sort By"];

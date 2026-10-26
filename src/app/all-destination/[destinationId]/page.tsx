@@ -1,6 +1,6 @@
 import { IDestination } from "@/app/types/type";
-import DeleteDestinationDialogue from "@/components/DeleteDestinationDialogue";
-import EditDestinationDialogue from "@/components/EditDestinationDialogue";
+import DeleteDestinationDialogue from "@/components/Destination/DeleteDestinationDialogue";
+import EditDestinationDialogue from "@/components/Destination/EditDestinationDialogue";
 import Image from "next/image";
 import Link from "next/link";
 

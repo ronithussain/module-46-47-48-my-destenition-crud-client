@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 const initialForm = {
   name: "",
@@ -51,6 +52,7 @@ export default function AddDestinationPage() {
     const afterSubmit = await res.json()
     if(afterSubmit.insertedId){
       toast.success('Destination added successfully!')
+      redirect('/all-destination')
     }
 
     console.log(afterSubmit, 'api client');

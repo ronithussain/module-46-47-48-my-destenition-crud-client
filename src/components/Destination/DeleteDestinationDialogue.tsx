@@ -12,6 +12,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 interface DeleteIDestinationProps {
   destination: IDestination;
@@ -24,6 +26,10 @@ export default function DeleteDestinationDialogue({destination}:DeleteIDestinati
         });
         const afterDelete = await res.json()
         console.log(afterDelete, 'delete destination');
+        if(afterDelete.deletedCount > 0){
+            toast.success('Destination packeg deleted successfully!')
+            redirect('/all-destination')
+        }
     }
   return (
     <AlertDialog>
