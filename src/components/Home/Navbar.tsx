@@ -45,7 +45,7 @@ const navLinks = [
   },
   {
     label: "My Bookings",
-    href: "/bookings",
+    href: "/my-booking",
     icon: CalendarCheck,
   },
   { label: "Admin", href: "/admin", icon: ShieldCheck },
@@ -205,7 +205,7 @@ export default function Navbar() {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                      onClick={() => router.push("/bookings")}
+                      onClick={() => router.push("/my-booking")}
                       className="cursor-pointer"
                     >
                       <CalendarCheck className="mr-2 size-4" />

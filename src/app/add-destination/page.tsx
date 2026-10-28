@@ -55,7 +55,7 @@ export default function AddDestinationPage() {
       redirect('/all-destination')
     }
 
-    console.log(afterSubmit, 'api client');
+    // console.log(afterSubmit, 'api client');
   };
 
   return (

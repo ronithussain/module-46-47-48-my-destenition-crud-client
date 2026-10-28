@@ -10,3 +10,12 @@ export interface IDestination {
   description: string;
   rating?: number;
 }
+
+export interface IBooking {
+  _id: string;
+  name: string;
+  imageUrl: string;
+  price: string;
+  departureDate: string;
+  status?: "Confirmed" | "Pending" | "Cancelled";
+}

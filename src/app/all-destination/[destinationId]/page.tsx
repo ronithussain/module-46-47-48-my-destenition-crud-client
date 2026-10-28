@@ -1,4 +1,5 @@
 import { IDestination } from "@/app/types/type";
+import BookCard from "@/components/Bookings/BookCard";
 import DeleteDestinationDialogue from "@/components/Destination/DeleteDestinationDialogue";
 import EditDestinationDialogue from "@/components/Destination/EditDestinationDialogue";
 import Image from "next/image";
@@ -31,10 +32,9 @@ const DestinationDetailPage = async ({ params }: IParamsProps) => {
           </Link>
           {/* edit, cancel button */}
           <div className="flex gap-3">
-         
-            <EditDestinationDialogue destination={data}/>
+            <EditDestinationDialogue destination={data} />
 
-            <DeleteDestinationDialogue destination={data}/>
+            <DeleteDestinationDialogue destination={data} />
           </div>
         </div>
 
@@ -164,56 +164,7 @@ const DestinationDetailPage = async ({ params }: IParamsProps) => {
           </section>
 
           {/* Right booking card */}
-          <aside>
-            <div className="sticky top-6 rounded-xl border border-slate-200 p-5 shadow-sm">
-              <p className="text-sm text-slate-500">Starting from</p>
-
-              <div className="mt-1 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-sky-600">
-                  ${data.price}
-                </span>
-              </div>
-
-              <p className="text-xs text-slate-500">per person</p>
-
-              <div className="my-5 border-t border-slate-100" />
-
-              <label
-                htmlFor="departureDate"
-                className="mb-2 block text-sm font-medium text-slate-700"
-              >
-                Departure Date
-              </label>
-
-              <input
-                id="departureDate"
-                type="date"
-                value={data.departureDate}
-                readOnly
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none"
-              />
-
-              <button
-                type="button"
-                className="mt-4 w-full rounded-lg bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
-              >
-                Book Now →
-              </button>
-
-              <div className="mt-5 space-y-3 border-t border-slate-100 pt-4">
-                {[
-                  "Destination details available",
-                  "Plan your next adventure",
-                  "Travel information included",
-                ].map((item) => (
-                  <p key={item} className="flex gap-2 text-xs text-slate-500">
-                    <span className="text-emerald-500">✓</span>
-                    {item}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </aside>
+         <BookCard data={data} /> 
         </div>
       </div>
     </main>
