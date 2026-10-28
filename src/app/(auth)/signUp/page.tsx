@@ -1,31 +1,53 @@
-'use client';
-import { cn } from "cn"
+"use client";
+import { cn } from "cn";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { signUp } from "@/lib/auth-client";
+import { toast } from "sonner";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignUpPage() {
-  const handleSignUp = (e:React.SubmitEvent<HTMLFormElement>) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleSignUp = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-
-  }
+    const formData = new FormData(e.currentTarget);
+    const userData = Object.fromEntries(formData.entries()) as {
+      name: string;
+      image: string;
+      email: string;
+      password: string;
+    };
+    // console.log(userData, 'user data ');
+    const { data, error } = await signUp.email({
+      ...userData,
+    });
+    if (data) {
+      toast.success("The user account created successfully!");
+      redirect("/");
+    } else {
+      toast.error("The user account created is failed!");
+    }
+  };
   return (
-    <div className={("flex flex-col gap-6 max-w-3xl mx-auto my-10")}>
+    <div className={"flex flex-col gap-6 max-w-2xl mx-auto my-10"}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
@@ -61,7 +83,7 @@ export default function SignUpPage() {
               </FieldSeparator>
               {/* name */}
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">Name</FieldLabel>
                 <Input
                   id="name"
                   type="text"
@@ -72,7 +94,7 @@ export default function SignUpPage() {
               </Field>
               {/* imageUrl */}
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">Image Url</FieldLabel>
                 <Input
                   id="image"
                   type="url"
@@ -97,19 +119,37 @@ export default function SignUpPage() {
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
+                  <Link
                     href="#"
                     className="ml-auto text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
-                <Input id="password" name="password" type="password" required />
+                <div className="relative">
+                  <Input
+                    placeholder="Enter your password"
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">Sign Up</Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  have an account? <Link href="/login">Login</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -121,5 +161,5 @@ export default function SignUpPage() {
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
