@@ -16,6 +16,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const initialForm = {
   name: "",
@@ -42,10 +44,16 @@ export default function AddDestinationPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // jwt token verify:
+    const token = await getTokenFromClient()
+    console.log(token, 'add destination page token is');
+
+
     const res = await fetch('http://localhost:5000/add-destination',{
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${token}`
       },
       body: JSON.stringify(form)
     })

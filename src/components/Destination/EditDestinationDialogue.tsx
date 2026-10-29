@@ -24,6 +24,7 @@ import { useState } from "react";
 import { PackageCheck, PackageCheckIcon, X } from "lucide-react";
 import { IDestination } from "@/app/types/type";
 import { redirect } from "next/navigation";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 interface EditIDestinationProps {
   destination: IDestination;
 }
@@ -42,10 +43,13 @@ const EditDestinationDialogue = ({ destination }: EditIDestinationProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const token = getTokenFromClient();
+
     const res = await fetch(`http://localhost:5000/all-destination/${destination._id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(form),
     });

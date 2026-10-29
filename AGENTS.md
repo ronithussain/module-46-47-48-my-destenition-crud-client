@@ -10,35 +10,55 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Project notes
 
-App Router project under `src/app` (there is no root `app/`). `@/*` maps to `src/*`.
+Next.js 16 App Router under `src/app` (there is no root `app/`). `@/*` maps to `src/*`.
 
 ## Commands
 
 - `npm run dev` — Turbopack dev server on `:3000`.
-- `npm run build` — production build; also runs TypeScript and can take over a minute on this machine.
-- `npx tsc --noEmit` — quick typecheck (no `typecheck` script exists).
+- `npm run build` — production build; also runs TypeScript and can take over a minute.
+- `npm start` — production server.
 - `npm run lint` — ESLint over the repo; use `npx eslint <path>` for a focused run.
+- `npx tsc --noEmit` — quick typecheck (no `typecheck` script exists).
 - No test runner is configured; do not assume `npm test` exists.
 - Use npm (`package-lock.json`). `cn@0.5` requires Node 22+.
 
-## UI conventions
-
-- `src/components/ui/*` are shadcn-generated for style `base-nova`. They are built on `@base-ui/react`, **not** Radix — don't port Radix examples.
-- Generated components import `cn` from the `cn` package. `src/lib/utils.ts` only re-exports it; keep the `cn` import when editing these files.
-- Add components via the installed CLI (`npx shadcn add <component>`) so it follows `components.json` (`src/app/globals.css`, `@/components/ui`, Lucide icons).
-- Tailwind is v4 and CSS-first: there is no `tailwind.config.*`. Theme tokens live in `src/app/globals.css` (`@theme inline`, `:root`, `.dark`). Don't add PostCSS/Tailwind config files.
-
 ## Framework settings that change how you write code
 
-`next.config.ts` enables `cacheComponents`, `partialPrefetching`, `reactCompiler`, and compiles CSS through `@tailwindcss/turbopack`.
+`next.config.ts` sets `cacheComponents: false`, `partialPrefetching: false`, `reactCompiler: true`, and compiles CSS through `@tailwindcss/turbopack`. Remote images are restricted to `images.unsplash.com`.
 
-- With Cache Components on, route segment exports `dynamic`, `dynamicParams`, `revalidate`, `fetchCache`, and `runtime` are unavailable. Wrap dynamic data in `<Suspense>` or use `"use cache"`; use `export const instant = false` to opt a route out. See `node_modules/next/dist/docs/01-app/01-getting-started/08-caching.md` and `node_modules/next/dist/docs/01-app/02-guides/migrating-to-cache-components.md`.
-- `LayoutProps<"/">`, `PageProps`, etc. are generated route types. After adding/moving routes, let `next dev` or `next build` regenerate them before trusting type errors.
-- Dev/build output flags instant-navigation issues; these are validation insights, not necessarily build failures.
+Because `cacheComponents` is off, route segment exports like `dynamic`, `revalidate`, `fetchCache`, `runtime` are not gated by the cache-component rules; wrap dynamic data in `<Suspense>` as needed.
 
-## Current state
+`LayoutProps<"/">`, `PageProps`, etc. are generated route types. After adding/moving routes, let `next dev` or `next build` regenerate them before trusting type errors.
 
-- The homepage is composed of `src/components/Navbar.tsx`, `Banner.tsx`, `WhyChoose.tsx`, `Testimonials.tsx`, `ReadyToStart.tsx`, and `Footer.tsx`. Testimonials use the shadcn `Carousel` (`embla-carousel-react`).
-- `src/app/layout.tsx` renders `Navbar` and `Footer` for every route; individual pages should not import them again.
-- `src/app/add-destination/page.tsx` is a static add-package form built with shadcn `Input`, `Label`, `Select`, `Textarea`, and `Button`.
-- There is no data layer, API route, or database dependency yet — the "CRUD" app is unbuilt, so don't assume existing models or endpoints.
+Dev/build output flags instant-navigation issues; these are validation insights, not necessarily build failures.
+
+## Auth & data layer
+
+Auth is `better-auth` with the MongoDB adapter (`@better-auth/mongo-adapter`).
+
+- Server: `src/lib/auth.ts` (`betterAuth`, email/password + Google). Client: `src/lib/auth-client.ts` (`createAuthClient`).
+- API route: `src/app/api/auth/[...all]/route.ts` handles all `/api/auth/*` endpoints.
+- Required env vars (all in the gitignored `.env`; no `.env.example` is committed): `MONGODB_URI`, `GOOGLE_CLIENT`, `GOOGLE_SECRET`, `BETTER_AUTH_URL`. Create `.env` locally before auth flows work.
+- Database name is `wanderlastDB`.
+- There is no Next.js data layer for destinations yet. The add-destination form posts to `http://localhost:5000/add-destination` — an external backend on port 5000, **not** a Next.js API route.
+
+## Routes
+
+- `/` — home (`page.tsx`: Banner, WhyChoose, Testimonials, ReadyToStart)
+- `/(auth)/{login, signUp, profile}`
+- `/add-destination` — client form (`"use client"`), shadcn inputs, posts to `:5000/add-destination`
+- `/all-destination` and `/all-destination/[destinationId]`
+- `/my-booking`
+- `loading.tsx`, `not-found.tsx`, `favicon.ico` live at `src/app/` root
+
+## UI conventions
+
+- `src/components/ui/*` are shadcn-generated for style `base-nova`, built on `@base-ui/react` **not** Radix — don't port Radix examples.
+- Generated components import `cn` from the `cn` package. `src/lib/utils.ts` only re-exports it; keep the `cn` import when editing these files.
+- Add components via `npx shadcn add <component>` so it follows `components.json` (`src/app/globals.css`, `@/components/ui`, Lucide icons).
+- Tailwind is v4 and CSS-first: no `tailwind.config.*`. Theme tokens live in `src/app/globals.css` (`@theme inline`, `:root`, `.dark`). Don't add PostCSS/Tailwind config files.
+- `src/app/layout.tsx` renders `Navbar`, `Footer`, and a `sonner` `Toaster` for every route; individual pages should not import them again.
+
+## Build artifacts (gitignored — do not commit)
+
+`.next/`, `out/`, `build/`, `next-env.d.ts`, `tsconfig.tsbuildinfo`, `.env*`, `node_modules`. `tsconfig.json` still references `next-env.d.ts` and `.next/types` in its `include`, but they are generated/ignored.

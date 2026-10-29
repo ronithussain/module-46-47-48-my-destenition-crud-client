@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { IDestination } from "@/app/types/type";
 import {
   AlertDialog,
@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
@@ -19,18 +20,30 @@ interface DeleteIDestinationProps {
   destination: IDestination;
 }
 
-export default function DeleteDestinationDialogue({destination}:DeleteIDestinationProps) {
-    const handleDeleteDestination = async() => {
-        const res = await fetch(`http://localhost:5000/all-destination/${destination._id}`,{
-            method: 'DELETE',
-        });
-        const afterDelete = await res.json()
-        console.log(afterDelete, 'delete destination');
-        if(afterDelete.deletedCount > 0){
-            toast.success('Destination packeg deleted successfully!')
-            redirect('/all-destination')
-        }
+export default function DeleteDestinationDialogue({
+  destination,
+}: DeleteIDestinationProps) {
+  const handleDeleteDestination = async () => {
+
+    // verify token :
+    const token = getTokenFromClient();
+
+    const res = await fetch(
+      `http://localhost:5000/all-destination/${destination._id}`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const afterDelete = await res.json();
+    console.log(afterDelete, "delete destination");
+    if (afterDelete.deletedCount > 0) {
+      toast.success("Destination packeg deleted successfully!");
+      redirect("/all-destination");
     }
+  };
   return (
     <AlertDialog>
       <AlertDialogTrigger
@@ -53,9 +66,9 @@ export default function DeleteDestinationDialogue({destination}:DeleteIDestinati
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction 
-          onClick={handleDeleteDestination}
-          >Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteDestination}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

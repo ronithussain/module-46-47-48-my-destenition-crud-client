@@ -2,6 +2,7 @@ import { IDestination } from "@/app/types/type";
 import BookCard from "@/components/Bookings/BookCard";
 import DeleteDestinationDialogue from "@/components/Destination/DeleteDestinationDialogue";
 import EditDestinationDialogue from "@/components/Destination/EditDestinationDialogue";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,8 +15,15 @@ interface IParamsProps {
 const DestinationDetailPage = async ({ params }: IParamsProps) => {
   const { destinationId } = await params;
 
+  const token = await getTokenFromServer();
+
   const res = await fetch(
     `http://localhost:5000/all-destination/${destinationId}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
   );
   const data: IDestination = await res.json();
 
@@ -164,7 +172,7 @@ const DestinationDetailPage = async ({ params }: IParamsProps) => {
           </section>
 
           {/* Right booking card */}
-         <BookCard data={data} /> 
+          <BookCard data={data} />
         </div>
       </div>
     </main>
